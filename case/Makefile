@@ -9,7 +9,7 @@ default: tests
 
 lua-dap:
 	test -d "$(REPO_DIR)" || git clone $(REPO_URL)
-	cd $(REPO_DIR) && npm install && npm run build
+	cd $(REPO_DIR) && npm install --verbose && npm run build
 
 tests:
 	nvim -l tests/busted.lua tests

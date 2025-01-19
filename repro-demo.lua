@@ -34,6 +34,8 @@ local function config_local_lua_dap()
   }
 end
 
+Lvl = 3
+
 ---@diagnostic disable [missing-fields]
 require("lazy.minit").repro({
   spec = {
@@ -44,12 +46,12 @@ require("lazy.minit").repro({
       keys = {
         { "<leader>3", function()
             require("dap").continue()
-            vim.notify("After the error go to line 12", 4)
+            vim.notify("Use <space>3 again. After the error go to line 12", Lvl)
           end
         },
         { "<leader>5", function()
             require("dap").continue()
-            vim.notify("Work fine", 4)
+            vim.notify("The test pass. Now use <space>6 to see how the errors disappear with neotest.run.run(vim.fn.expand('%'))", 3)
           end
         },
       },
@@ -67,19 +69,24 @@ require("lazy.minit").repro({
       keys = {
         { "<leader>1", function()
             require("neotest").run.run(vim.fn.expand("%"))
-            vim.notify("Use <space>2 to run the same in debug mode and stop in the breakpoint.", 4)
+            vim.notify("Wait until finish (all ok). Use <space>2 to run the same now in debug mode (should stop on the breakpoint).", Lvl)
           end, desc = "neotest: Run all test in the current file"
         },
         { "<leader>2", function()
             require("neotest").run.run({strategy = "dap"})
-            vim.notify("This line is going to fail. Use <space>3 twice to check the error.", 4)
+            vim.notify("This line is going to fail. Use <space>3 twice to check the error.", Lvl)
           end, desc = "neotest: Debug nearest test"
         },
         { "<leader>4", function()
             vim.cmd("normal! 13gg")
             require("neotest").run.run({strategy = "dap"})
-            vim.notify("This is going to work fine. Use <space>5 to check it.", 4)
+            vim.notify("This is going to work fine. Use <space>5 to check it.", Lvl)
           end, desc = "neotest: Debug nearest test"
+        },
+        { "<leader>6", function()
+            require("neotest").run.run(vim.fn.expand("%"))
+            vim.notify("And the fail is gone. Check the 'repro.lua' file for a regular repro environment or use the case itself.", 3)
+          end,
         },
       },
       opts = {
@@ -107,9 +114,9 @@ vim.cmd("cd case")
 vim.api.nvim_create_user_command("Make", function()
   if vim.fn.executable("npm") == 1 then
     vim.cmd("make lua-dap")
-    vim.notify("Done. Use `:RunCase` to set the environment", 4)
+    vim.notify("Done. Use `:RunCase` to set the environment", Lvl)
   else
-    vim.notify("npm is not available. Install local-lua-debugger-vscode manually", 4)
+    vim.notify("npm is not available. Install local-lua-debugger-vscode manually", Lvl)
   end
 end, {})
 
@@ -128,7 +135,7 @@ vim.api.nvim_create_user_command("RunCase", function()
   vim.cmd("normal! 4gg")
   dap.toggle_breakpoint()
 
-  vim.notify("All set. Use <space>1 to execute neotest.run.run(vim.fn.expand('%')). Should work ok", 4)
+  vim.notify("All set. Use <space>1 to execute neotest.run.run(vim.fn.expand('%')). Should work ok", Lvl)
 end, {})
 
-vim.notify("Use `:Make` and then `:RunCase` to set the environment")
+vim.notify("Use `:Make` and then `:RunCase` to set the environment", Lvl)
